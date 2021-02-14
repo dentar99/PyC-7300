@@ -31,7 +31,7 @@ These are the three stupidest shortcomings in CI-V for this radio as well:
 	2: You can edit a CW keyer entry with CI-V, but you can't 
            transmit one.  This program fakes it by sending raw 
            ASCII versions of what's already in your keyer.
-     	3: If you turn off AGC with noise reduction turned on, the radio
+	3: If you turn off AGC with noise reduction turned on, the radio
            can start to oscillate.  The cure for this is to power the 
            radio off and on again and then either turn AGC on or NR off.
 
