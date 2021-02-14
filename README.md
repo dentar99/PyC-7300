@@ -1,4 +1,3 @@
-![PyC-7300](https://user-images.githubusercontent.com/76819904/107884009-6f005100-6ec0-11eb-9d48-b85d24d501ea.png)
 
         ******* USE AT YOUR OWN RISK *******
 
@@ -6,6 +5,9 @@
 
         *******  NO SUPPORT OFFERED  *******
 
+![PyC-7300](https://user-images.githubusercontent.com/76819904/107884009-6f005100-6ec0-11eb-9d48-b85d24d501ea.png)
+
+Python IC-7300 CI-V program by N4LSJ
 
 PyC-7300 was written solely as an educational venture during the COVID-19
 pandemic of 2020.  I learned quite a bit about CI-V from this, and got
