@@ -3,6 +3,8 @@
 # pylint: disable=C0302
 #
 # Author: Tom N4LSJ -- EXPERIMENTAL CODE ONLY FOR TINKERING
+#                   -- USE AT YOUR OWN RISK ONLY
+#                   -- AUTHOR ASSUMES NO LIABILITY
 #
 # INSTRUCTIONS:
 #
