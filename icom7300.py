@@ -735,7 +735,7 @@ def _process_scope(cmd_dict, received_data):
             ICOM.scope_top_lbl.set("Top: "+"{:10,}".format(ICOM.scope_one_freq + ICOM.scope_two_freq).replace(',','.'))
             ICOM.widget_object['scope_c_or_f'].config(text='Center')
 
-        elif ICOM.scope_c_or_f == b'\x01':
+        else:
             ICOM.scope_bottom = ICOM.scope_one_freq
             ICOM.scope_hzper = ((ICOM.scope_two_freq - ICOM.scope_bottom) / 475)
             ICOM.widget_object['scope_width'].grid_remove()
