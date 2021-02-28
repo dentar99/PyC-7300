@@ -517,6 +517,12 @@ def _process_scope_width(cmd_dict, received_data):
         :ICOM.irpl +len(cmd_dict['command'])+(cmd_dict['num_of_bytes_returned'])]
     print("scope width returnval is "+str(returnval))
 
+def _process_scope_c_or_f(cmd_dict, received_data):
+    """ process specific thing """
+    returnval = received_data[ICOM.irpl+len(cmd_dict['command']) \
+        :ICOM.irpl +len(cmd_dict['command'])+(cmd_dict['num_of_bytes_returned'])]
+    ICOM.widget_object['scope_c_or_f'].set(ICOM.scopetypes[int.from_bytes(ICOM.scope_c_or_f,'big')]);
+
 def _process_vfoset(cmd_dict, received_data):
     """ process specific thing """
     returnval = received_data[ICOM.irpl+len(cmd_dict['command']) \
@@ -727,13 +733,14 @@ def _process_scope(cmd_dict, received_data):
 
         ICOM.scope_bot_lbl.set("Bot: "+"{:10,}".format(ICOM.scope_bottom).replace(',','.'))
         ICOM.widget_object['scope_width'].set(ICOM.scope_two_freq)
+
         if ICOM.scope_c_or_f == b'\x00':
             ICOM.scope_bottom = ICOM.scope_one_freq - ICOM.scope_two_freq
             ICOM.scope_hzper = ( ICOM.scope_two_freq * 2 / 475 )
             ICOM.widget_object['scope_width'].grid()
             ICOM.widget_object['scope_edge'].grid_remove()
             ICOM.scope_top_lbl.set("Top: "+"{:10,}".format(ICOM.scope_one_freq + ICOM.scope_two_freq).replace(',','.'))
-            ICOM.widget_object['scope_c_or_f'].config(text='Center')
+            ICOM.widget_object['scope_c_or_f'].config(text='')
 
         else:
             ICOM.scope_bottom = ICOM.scope_one_freq
@@ -741,12 +748,14 @@ def _process_scope(cmd_dict, received_data):
             ICOM.widget_object['scope_width'].grid_remove()
             ICOM.widget_object['scope_edge'].grid()
             ICOM.scope_top_lbl.set("Top: "+"{:10,}".format(ICOM.scope_two_freq).replace(',','.'))
-            ICOM.widget_object['scope_c_or_f'].config(text='Fixed')
+            ICOM.widget_object['scope_c_or_f'].config(text='')
 
         sm=ICOM.widget_object['scope_mult'].get()
 
         #if sm == "":
         #    ICOM.widget_object['scope_mult'].set("x1")
+
+        #ICOM.widget_object['scope_c_or_f'].set(ICOM.scopetypes[int.from_bytes(ICOM.scope_c_or_f,'big')]);
 
         ICOM.scope_mult = {"":1, "x1":1, "x2":2, "x4":4, "x8":8}[sm]
 
@@ -1866,6 +1875,8 @@ class IC7300:
         self.agc['02'] = [0.0, 0.3, 0.5, 0.8, 1.2, 1.6, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 
         self.keyertypes = ['Normal', '190->ANO', '190->ANT', '190->1NO', '190->1NT']
+
+        self.scopetypes = ['CENTER', 'FIX', 'SCROLL-C', 'SCROLL-F']
 
         self.nr_levels = (8, 24, 40, 56, 72, 88, 104, 120, 136, 152, 168, 184, 200, 216, 232, 248)
 
@@ -3050,6 +3061,8 @@ class IC7300:
         elif widg_type == "LabelCombobox":
             if name == 'scope_width':
                 temp.setdefault('fn', _process_scope_width)
+            elif name == 'scope_c_or_f':
+                temp.setdefault('fn', _process_scope_c_or_f)
             elif name == 'scope_edge':
                 temp.setdefault('fn', _process_scope_edge)
             elif name == 'contestnums':
@@ -3112,7 +3125,7 @@ class IC7300:
                     self.binary_send_item.setdefault(name2, memcmd)
 
         elif widg_type == 'LabelCombobox':
-            if name in ('cur_rx_bw', 'agc_time', 'contestnums', 'theme', 'scope_width', 'scope_edge','scope_mult'):
+            if name in ('cur_rx_bw', 'agc_time', 'contestnums', 'theme', 'scope_width', 'scope_edge','scope_mult','scope_c_or_f'):
                 self.widget_object[name] = \
                         LabelCombobox(self.widget_object[win],
                                       labeltext=title,
@@ -3121,6 +3134,8 @@ class IC7300:
                                       font='Courier 10')
                 if name == 'contestnums':
                     self.widget_object[name]['values'] = self.keyertypes
+                elif name == 'scope_c_or_f':
+                    self.widget_object[name]['values'] = self.scopetypes
                 elif name in ('theme','scope_width','scope_edge','scope_mult'):
                     self.widget_object[name]['values'] = values
                 if name == 'scope_mult':
@@ -3599,12 +3614,14 @@ class IC7300:
         X_SCOPEWIDTH = [ 2500, 5000, 10000, 25000, 50000, 100000, 250000, 500000 ]
         X_SCOPEEDGE = [ '01', '02', '03' ]
         X_SCOPEMULT = [ 'x1', 'x2', 'x4', 'x8' ]
+        #X_SCOPECORF = [ '00','01', '02', '03' ]
     
         X_OFF_ON = collections.OrderedDict([('Off', b'\x00'), ('On', b'\x01')])
+        #X_SCOPECORF = collections.OrderedDict([('Cent', b'\x00'), ('Fix', b'\x01'), ('Cent-S', b'\x02'), ('Fix-S', b'\x03')])
     
     
         self.makebutt(
-            'scope_c_or_f', b'\x27\x14\x00', 'RadiobuttonTog', X_OFF_ON, 1,
+            'scope_c_or_f', b'\x27\x14\x00', 'LabelCombobox', {}, 1,
             self.poll_scope_mask, 'Scope', 21, 3, 1, 1, 'Center', 0, 1, 9,
             "Scope:\r\rCentered or Fixed.")
     
