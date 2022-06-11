@@ -198,7 +198,7 @@ def get_digi_prog():
     if len(digiprogs) > 0:
         digi_win = tkinter.Toplevel(root)
         #cc = tkinter.ttk.Combobox(digi_win, values=digiprogs, height=1)
-        cc = tkinter.Listbox(digi_win,  height=len(digiprogs))
+        cc = tkinter.Listbox(digi_win,  height=len(digiprogs), width=50)
         cc['selectmode']=tkinter.SINGLE
         for x in digiprogs:
             cc.insert(tkinter.END,x)
@@ -263,6 +263,20 @@ def setting_get_and_set(command,val):
 
 
 def stuff_startup_cmds():
+
+    CO.send_direct(ICOM.send_preamble_bin + b'\x27\x11\x00' + ICOM.suffix_bin)
+    rx_initial_bytes=CO.no_buf_direct_receive()
+    #print ("RX initial bytes:")
+    #print(rx_initial_bytes)
+    if (rx_initial_bytes is None):
+                xcmd = ICOM.powerpfx_bin + \
+                    ICOM.send_preamble_bin + \
+                    ICOM.widget_object['set_power_on'].command + \
+                    ICOM.suffix_bin
+                CO.send_direct(xcmd)
+                time.sleep(4)
+
+
     # FIRST we stuff mandatory commands into the queue to put it into VFO mode,
     # select "A", turn off Echo, and turn off Transceive
     # turn off scope sending
@@ -1141,7 +1155,7 @@ Good luck and have fun!
 
         """
         self.widges['hep_tex'] = tkinter.Text(
-            self.widges['config_win'], height=30, width=80)
+            self.widges['config_win'], height=20, width=80)
         self.widges['skrolly'] = tkinter.Scrollbar(
             self.widges['config_win'], command=self.widges['hep_tex'].yview)
         self.widges['hep_tex'].insert(tkinter.END, helptext)
